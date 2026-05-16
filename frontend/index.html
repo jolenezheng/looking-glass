@@ -412,7 +412,13 @@
     'video1.mov',
     'video2.mov',
     'video3.mov',
-    'video4.mov',
+    'video4.MP4',
+    'video5.mov',
+    'video6.MOV',
+    'video7.MOV',
+    'video8.MOV',
+    'video9.MOV',
+    'video10.MOV',
   ];
 
   // Shuffle array in place (Fisher-Yates)
@@ -431,9 +437,11 @@
   displayed = ALL_VIDEOS.slice(0, 4);
   pool = ALL_VIDEOS.slice(4);
 
+  const BUST = '?v=' + Date.now();
+
   function makeVideo(src, quadrantIndex) {
     const video = document.createElement('video');
-    video.src = src;
+    video.src = src + BUST;
     video.autoplay = true;
     video.muted = true;
     video.loop = true;
@@ -471,13 +479,11 @@
     if (pool.length === 0) return;
 
     const quadIdx = Math.floor(Math.random() * 4);
-    const poolIdx = Math.floor(Math.random() * pool.length);
 
-    const incoming = pool[poolIdx];
+    const incoming = pool.shift();
     const outgoing = displayed[quadIdx];
 
-    // Swap in state
-    pool[poolIdx] = outgoing;
+    pool.push(outgoing);
     displayed[quadIdx] = incoming;
 
     // Animate out → swap src → animate in
@@ -486,7 +492,7 @@
     videoEl.style.opacity = '0';
 
     setTimeout(() => {
-      videoEl.src = incoming;
+      videoEl.src = incoming + BUST;
       videoEl.load();
       videoEl.play();
       videoEl.style.opacity = '1';
