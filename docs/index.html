@@ -652,28 +652,28 @@
     greeting: {
       q: s => `${s.name}! I'm Joe, it's lovely to meet you :) What brings you here?`,
       opts: [
-        { label: "I would like to subscribe via email when this project is ready for week 1 submissions! If I have a mix ready, I would love to participate :) If I don't have a mix, I would still like to be kept in the loop for when it's ready.", next: 'subscribe_eager' },
+        { label: "I would like to subscribe to this project :)", next: 'subscribe_eager' },
         { label: 'I was bored… and intrigued', next: 'bored_intrigued' },
-        { label: "I came here by accident! I'd like to *poof* out of here and exit this tab via this portal:", exit: true },
+        { label: "I came here by accident! I'd like to *poof* out of here", exit: true },
       ],
     },
     subscribe_eager: {
-      q: "Eek, exciting! Please leave your email and I will get back sometime, hopefully soon!!",
+      q: "Eek, exciting! Please leave your email and I will get back soon!!",
       opts: [
         { label: 'My email is:', input: true, inputType: 'email', placeholder: 'your email', stores: 'email', submitEmail: true, next: 'email_thanks' },
-        { label: "Actually, I changed my mind. I'll subscribe in the future if I feel like it. In the meantime, I'd like to *poof* out of here, forget this all ever happened, and exit this tab via this portal:", exit: true },
+        { label: "Actually, I changed my mind. I'll subscribe in the future if I feel like it. In the meantime, I'd like to *poof* out of here.", exit: true },
       ],
     },
     bored_intrigued: {
       q: "Ok well… I'd love to have you on board. Give me one more chance to impress you ;)",
       opts: [
-        { label: "You got me. You can let me know when you're ready at this email. If you don't impress me then, I will unsubscribe!", input: true, inputType: 'email', placeholder: 'your email', stores: 'email', submitEmail: true, next: 'email_thanks' },
+        { label: "You got me. Lmk when you're ready. If you don't impress me then, I will unsubscribe!", input: true, inputType: 'email', placeholder: 'your email', stores: 'email', submitEmail: true, next: 'email_thanks' },
         { label: "Hmm it's a no from me today. Wanna know why?", next: 'no_why' },
         { label: "Not today, sorry. Get me out of here through this portal and let's forget this ever happened!", exit: true },
       ],
     },
     no_why: {
-      q: "Idk, shouldn't you be convincing me why I should be here? (pssst: if you really don't know, you can click ? in the bottom right corner)",
+      q: "TODO: more to come...",
       opts: [{ label: 'Merp!', next: 'merp' }],
     },
     merp: {
