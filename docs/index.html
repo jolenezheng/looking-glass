@@ -641,7 +641,7 @@
   // ── Dialog tree ─────────────────────────────────────────────────────────────
   const TREE = {
     start: {
-      q: 'Hello! I am so excited to meet you here!!\nHow may I address you?',
+      q: 'Hello babycake patchy poo!\n',
       opts: [
         { label: 'Hello! My name is:', input: true, inputType: 'text', placeholder: 'your name', stores: 'name', next: 'greeting' },
         { label: 'wheezyRhino22', stores: 'name', value: 'wheezyRhino22', next: null },
@@ -650,7 +650,7 @@
       ],
     },
     greeting: {
-      q: s => `${s.name}! I'm Joe, it's lovely to meet you :) What brings you here?`,
+      q: s => `ohhhh hallo ${s.name}. I'm Joe. What brings you here?`,
       opts: [
         { label: "I would like to subscribe to this project :)", next: 'subscribe_eager' },
         { label: 'I was bored… and intrigued', next: 'bored_intrigued' },
@@ -685,7 +685,7 @@
       ],
     },
     email_thanks: {
-      q: s => `you're in${s.name ? ', ' + s.name : ''}.\nsit tight.`,
+      q: s => `Heh, see you soon ${s.name ? ', ' + s.name : ''}.`,
       opts: [],
     },
   };
