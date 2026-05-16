@@ -103,38 +103,63 @@
   }
 
   .enter-btn {
-    background: none;
+    background: radial-gradient(ellipse at center, #1c1710 15%, rgba(10,9,6,0) 100%);
     border: none;
+    border-radius: 50%;
     cursor: none;
-    padding: 20px 32px;
+    width: 112px;
+    height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: relative;
     opacity: 0;
-    animation: fadeUp 1.2s ease 1.8s forwards;
+    animation: fadeUp 1.2s ease 1.8s forwards, portalPulse 3s ease-in-out 3.2s infinite;
+    transition: box-shadow 0.4s ease;
   }
 
   .enter-btn span {
     font-family: 'Courier Prime', monospace;
     font-size: 11px;
-    letter-spacing: 0.28em;
-    color: var(--cream);
+    letter-spacing: 0.22em;
+    color: white;
     text-transform: uppercase;
-    opacity: 0.7;
-    display: block;
-    transition: opacity 0.3s ease;
+    transition: color 0.25s ease, text-shadow 0.25s ease;
+    position: relative;
+    z-index: 1;
   }
 
-  .enter-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border: 0.5px solid rgba(245,240,232,0.25);
-    transition: border-color 0.3s ease, transform 0.3s ease;
+  .enter-btn::before { display: none; }
+
+  .enter-btn:hover span {
+    color: #b5d44a;
+    text-shadow: 0 0 10px rgba(181,212,74,0.7), 0 0 24px rgba(181,212,74,0.4);
   }
 
-  .enter-btn:hover span { opacity: 1; }
-  .enter-btn:hover::before {
-    border-color: rgba(245,240,232,0.6);
-    transform: scale(1.04);
+  .enter-btn:hover {
+    animation-play-state: running, paused;
+    box-shadow:
+      0 0 22px 8px rgba(251,191,36,0.55),
+      0 0 55px 20px rgba(251,191,36,0.28),
+      0 0 110px 45px rgba(251,191,36,0.10),
+      inset 0 0 20px rgba(0,0,0,0.7);
+  }
+
+  @keyframes portalPulse {
+    0%, 100% {
+      box-shadow:
+        0 0 28px 8px rgba(245,240,232,0.18),
+        0 0 65px 20px rgba(245,240,232,0.09),
+        0 0 130px 40px rgba(245,240,232,0.04),
+        inset 0 0 28px rgba(0,0,0,0.96);
+    }
+    50% {
+      box-shadow:
+        0 0 42px 14px rgba(245,240,232,0.34),
+        0 0 95px 32px rgba(245,240,232,0.17),
+        0 0 180px 60px rgba(245,240,232,0.07),
+        inset 0 0 28px rgba(0,0,0,0.96);
+    }
   }
 
   @keyframes fadeUp {
@@ -174,90 +199,144 @@
   }
 
   .form-inner {
-    text-align: center;
     background: #ffffff;
-    padding: 48px 40px;
-    max-width: 440px;
+    padding: 28px 28px 16px;
+    max-width: 520px;
     width: 100%;
+    display: flex;
+    flex-direction: column;
   }
 
   .form-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 300;
-    font-style: italic;
-    font-size: clamp(28px, 5vw, 42px);
-    color: var(--ink);
-    margin-bottom: 8px;
-    letter-spacing: 0.02em;
+    font-family: 'Courier Prime', monospace;
+    font-size: 9px;
+    letter-spacing: 0.35em;
+    color: rgba(26,24,20,0.25);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    text-align: left;
   }
 
-  .form-sub {
+  .chat-log {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 8px;
+    scrollbar-width: none;
+  }
+  .chat-log::-webkit-scrollbar { display: none; }
+
+  .msg-joe-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--ink);
+    line-height: 1.55;
+  }
+
+  .msg-user {
     font-family: 'Courier Prime', monospace;
     font-size: 10px;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.12em;
     color: rgba(26,24,20,0.45);
-    text-transform: uppercase;
-    margin-bottom: 40px;
-    line-height: 1.8;
+    text-align: right;
+    line-height: 1.6;
+    padding-left: 32px;
   }
 
-  .form-row {
+  .chat-options {
+    flex-shrink: 0;
+  }
+
+  .dialog-opt:nth-child(odd)  { background: #ffffff; }
+  .dialog-opt:nth-child(even) { background: #eaf2ff; }
+
+  .dialog-opt {
     display: flex;
-    gap: 0;
-    border: 0.5px solid rgba(26,24,20,0.2);
-    transition: border-color 0.3s ease;
+    align-items: center;
+    width: 100%;
+    background: none;
+    border: none;
+    border-bottom: 1px solid rgba(26,24,20,0.1);
+    padding: 13px 14px;
+    cursor: none;
+    text-align: left;
+    font-family: 'Courier Prime', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: rgba(26,24,20,0.45);
+    transition: color 0.15s ease, background 0.15s ease, border-left 0.15s ease, padding-left 0.15s ease;
+    gap: 12px;
   }
 
-  .form-row:focus-within {
-    border-color: rgba(26,24,20,0.5);
+  .dialog-opt:last-child { border-bottom: none; }
+
+  .dialog-opt:hover {
+    color: var(--ink);
+    background: rgba(59,130,246,0.08);
+    border-left: 2px solid #3b82f6;
+    padding-left: 12px;
   }
 
-  .form-row input {
+  .dialog-opt .tile-pip {
+    flex-shrink: 0;
+    width: 8px; height: 8px;
+    background: repeating-conic-gradient(#3b82f6 0% 25%, #fff 0% 50%) 0 0 / 4px 4px;
+    border: 0.5px solid rgba(59,130,246,0.4);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  .dialog-opt:hover .tile-pip { opacity: 1; }
+
+  .dialog-opt.has-input {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding-bottom: 0;
+  }
+
+  .dialog-opt.has-input .opt-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .name-row {
+    display: flex;
+    width: 100%;
+    border-top: 0.5px solid rgba(26,24,20,0.08);
+  }
+
+  .name-row input {
     flex: 1;
     background: transparent;
     border: none;
     outline: none;
-    padding: 14px 18px;
-    font-family: 'Courier Prime', monospace;
-    font-size: 12px;
-    letter-spacing: 0.1em;
-    color: var(--ink);
-    width: 100%;
-  }
-
-  .form-row input::placeholder {
-    color: rgba(26,24,20,0.3);
-    letter-spacing: 0.15em;
-  }
-
-  .form-row button {
-    background: none;
-    border: none;
-    border-left: 0.5px solid rgba(26,24,20,0.2);
-    padding: 14px 20px;
-    cursor: none;
+    padding: 9px 12px;
     font-family: 'Courier Prime', monospace;
     font-size: 10px;
-    letter-spacing: 0.2em;
-    color: rgba(26,24,20,0.5);
-    text-transform: uppercase;
-    white-space: nowrap;
-    transition: color 0.3s ease, background 0.3s ease;
-  }
-
-  .form-row button:hover {
+    letter-spacing: 0.1em;
     color: var(--ink);
-    background: rgba(26,24,20,0.04);
   }
 
-  .form-note {
-    margin-top: 20px;
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 14px;
-    color: rgba(26,24,20,0.4);
-    line-height: 1.7;
+  .name-row input::placeholder { color: rgba(26,24,20,0.25); }
+
+  .name-row button {
+    background: none;
+    border: none;
+    border-left: 0.5px solid rgba(26,24,20,0.08);
+    padding: 9px 14px;
+    cursor: none;
+    font-family: 'Courier Prime', monospace;
+    font-size: 11px;
+    color: rgba(26,24,20,0.35);
+    transition: color 0.2s ease;
   }
+
+  .name-row button:hover { color: var(--ink); }
 
   .form-close {
     position: absolute;
@@ -348,6 +427,39 @@
   .shuffle-btn.spinning svg {
     transform: rotate(180deg);
   }
+
+  .mute-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 20;
+    background: none;
+    border: 0.5px solid rgba(245,240,232,0.25);
+    cursor: none;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    animation: fadeUp 1.2s ease 2.2s forwards;
+    transition: border-color 0.3s ease, background 0.3s ease;
+  }
+
+  .mute-btn:hover {
+    border-color: rgba(245,240,232,0.6);
+    background: rgba(245,240,232,0.06);
+  }
+
+  .mute-btn svg {
+    width: 16px;
+    height: 16px;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+  }
+
+  .mute-btn:hover svg { opacity: 1; }
+  .mute-btn.muted svg { opacity: 0.35; }
 </style>
 </head>
 <body>
@@ -384,24 +496,28 @@
   <div class="tile-frame">
   <div class="form-inner">
     <div class="form-title">Looking Glass</div>
-    <div class="form-sub">a mix sharing project<br>something is coming</div>
-    <div class="form-row">
-      <input type="email" id="email-input" placeholder="your email" autocomplete="off" />
-      <button id="submit-btn" type="button">I'm in</button>
-    </div>
-    <p class="form-note">no spam. just a note when it's ready.</p>
-    <div class="thanks" id="thanks">you're in.<br>sit tight.</div>
+    <div class="chat-log" id="chat-log"></div>
+    <div class="chat-options" id="chat-options"></div>
   </div>
   </div>
 </div>
 
-<iframe
-  class="bandcamp-player"
-  src="https://bandcamp.com/EmbeddedPlayer/v=2/track=486922095/size=large/tracklist=false/artwork=small/"
-  seamless
-  id="bc-player"
-  title="Looking Glass by K Wata"
-></iframe>
+<audio id="bg-audio" loop preload="auto">
+  <source src="K Wata - Looking Glass.mp3" type="audio/mpeg">
+</audio>
+
+<button class="mute-btn" id="mute-btn" aria-label="Toggle music" title="Toggle music">
+  <svg id="icon-sound" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+  </svg>
+  <svg id="icon-muted" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+    <line x1="23" y1="9" x2="17" y2="15"/>
+    <line x1="17" y1="9" x2="23" y2="15"/>
+  </svg>
+</button>
 
 <script>
   const API_BASE = '';  // set to your deployed backend URL in production
@@ -521,72 +637,278 @@
     el.addEventListener('mouseleave', () => cursor.classList.remove('expand'));
   });
 
-  const enterBtn = document.getElementById('enter-btn');
-  const overlay = document.getElementById('form-overlay');
-  const closeBtn = document.getElementById('form-close');
-  const submitBtn = document.getElementById('submit-btn');
-  const emailInput = document.getElementById('email-input');
-  const thanks = document.getElementById('thanks');
-  const formRow = document.querySelector('.form-row');
-  const formNote = document.querySelector('.form-note');
-  const formSub = document.querySelector('.form-sub');
+  // ── Dialog tree ─────────────────────────────────────────────────────────────
+  const TREE = {
+    start: {
+      q: 'Hello! I am so excited to meet you here!!\nHow may I address you?',
+      opts: [
+        { label: 'Hello! My name is:', input: true, inputType: 'text', placeholder: 'your name', stores: 'name', next: 'greeting' },
+        { label: 'wheezyRhino22', stores: 'name', value: 'wheezyRhino22', next: null },
+        { label: 'You first!', next: null },
+        { label: 'I prefer not to identify at this time ;)', next: null },
+      ],
+    },
+    greeting: {
+      q: s => `${s.name}! I'm Joe, it's lovely to meet you :) What brings you here?`,
+      opts: [
+        { label: "I would like to subscribe via email when this project is ready for week 1 submissions! If I have a mix ready, I would love to participate :) If I don't have a mix, I would still like to be kept in the loop for when it's ready.", next: 'subscribe_eager' },
+        { label: 'I was bored… and intrigued', next: 'bored_intrigued' },
+        { label: "I came here by accident! I'd like to *poof* out of here and exit this tab via this portal:", exit: true },
+      ],
+    },
+    subscribe_eager: {
+      q: "Eek, exciting! Please leave your email and I will get back sometime, hopefully soon!!",
+      opts: [
+        { label: 'My email is:', input: true, inputType: 'email', placeholder: 'your email', stores: 'email', submitEmail: true, next: 'email_thanks' },
+        { label: "Actually, I changed my mind. I'll subscribe in the future if I feel like it. In the meantime, I'd like to *poof* out of here, forget this all ever happened, and exit this tab via this portal:", exit: true },
+      ],
+    },
+    bored_intrigued: {
+      q: "Ok well… I'd love to have you on board. Give me one more chance to impress you ;)",
+      opts: [
+        { label: "You got me. You can let me know when you're ready at this email. If you don't impress me then, I will unsubscribe!", input: true, inputType: 'email', placeholder: 'your email', stores: 'email', submitEmail: true, next: 'email_thanks' },
+        { label: "Hmm it's a no from me today. Wanna know why?", next: 'no_why' },
+        { label: "Not today, sorry. Get me out of here through this portal and let's forget this ever happened!", exit: true },
+      ],
+    },
+    no_why: {
+      q: "Idk, shouldn't you be convincing me why I should be here? (pssst: if you really don't know, you can click ? in the bottom right corner)",
+      opts: [{ label: 'Merp!', next: 'merp' }],
+    },
+    merp: {
+      q: 'Merp',
+      opts: [
+        { label: 'Merp', next: 'merp' },
+        { label: 'Start over', next: 'start' },
+        { label: 'Exit this tab', exit: true },
+      ],
+    },
+    email_thanks: {
+      q: s => `you're in${s.name ? ', ' + s.name : ''}.\nsit tight.`,
+      opts: [],
+    },
+  };
 
-  enterBtn.addEventListener('click', () => {
-    overlay.classList.add('visible');
-    setTimeout(() => emailInput.focus(), 400);
-  });
+  const state = {};
+  const chatLog     = document.getElementById('chat-log');
+  const chatOptions = document.getElementById('chat-options');
 
-  closeBtn.addEventListener('click', () => {
+  function exitTab() {
     overlay.classList.remove('visible');
-  });
+    document.body.style.transition = 'opacity 1.2s ease';
+    document.body.style.opacity = '0';
+    setTimeout(() => window.close(), 1200);
+  }
 
-  overlay.addEventListener('click', e => {
-    if (e.target === overlay) overlay.classList.remove('visible');
-  });
-
-  submitBtn.addEventListener('click', handleSubmit);
-  emailInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') handleSubmit();
-  });
-
-  async function handleSubmit() {
-    const email = emailInput.value.trim();
-    if (!email || !email.includes('@')) {
-      emailInput.style.borderBottom = '0.5px solid rgba(245,240,232,0.4)';
-      emailInput.focus();
-      return;
-    }
-
-    submitBtn.textContent = '...';
-    submitBtn.disabled = true;
-
+  async function submitEmail(email) {
     try {
-      const res = await fetch(`${API_BASE}/waitlist`, {
+      await fetch(`${API_BASE}/waitlist`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        // already on list — still show thanks
-        if (res.status !== 409) throw new Error(data.detail || 'error');
-      }
     } catch (err) {
-      // fail silently for UX — the user sees thanks either way
       console.error('waitlist error:', err);
     }
-
-    formRow.style.display = 'none';
-    formNote.style.display = 'none';
-    formSub.style.display = 'none';
-    thanks.style.display = 'block';
-    thanks.style.animation = 'fadeUp 0.8s ease forwards';
   }
 
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') overlay.classList.remove('visible');
+  function appendJoe(text) {
+    const msg = document.createElement('div');
+    msg.className = 'msg-joe-text';
+    msg.textContent = text;
+    chatLog.appendChild(msg);
+    chatLog.scrollTop = chatLog.scrollHeight;
+  }
+
+  function appendUser(text) {
+    const msg = document.createElement('div');
+    msg.className = 'msg-user';
+    msg.textContent = text;
+    chatLog.appendChild(msg);
+    chatLog.scrollTop = chatLog.scrollHeight;
+  }
+
+  function goTo(nodeId) {
+    const node = TREE[nodeId];
+    if (!node) return;
+    const qText = typeof node.q === 'function' ? node.q(state) : node.q;
+    appendJoe(qText);
+    showOptions(node.opts);
+  }
+
+  function showOptions(opts) {
+    chatOptions.innerHTML = '';
+    opts.forEach(opt => {
+      chatOptions.appendChild(opt.input ? makeInputOpt(opt) : makeButtonOpt(opt));
+    });
+  }
+
+  function makeButtonOpt(opt) {
+    const btn = document.createElement('button');
+    btn.className = 'dialog-opt';
+    btn.type = 'button';
+
+    const pip = document.createElement('span');
+    pip.className = 'tile-pip';
+    const label = document.createElement('span');
+    label.textContent = opt.label;
+    btn.appendChild(pip);
+    btn.appendChild(label);
+
+    btn.addEventListener('click', () => {
+      if (opt.exit) { exitTab(); return; }
+      if (opt.stores && opt.value) state[opt.stores] = opt.value;
+      appendUser(opt.label);
+      chatOptions.innerHTML = '';
+      if (opt.next) setTimeout(() => goTo(opt.next), 320);
+    });
+    btn.addEventListener('mouseenter', () => cursor.classList.add('expand'));
+    btn.addEventListener('mouseleave', () => cursor.classList.remove('expand'));
+    return btn;
+  }
+
+  function makeInputOpt(opt) {
+    const wrap = document.createElement('div');
+    wrap.className = 'dialog-opt has-input';
+
+    const top = document.createElement('div');
+    top.className = 'opt-top';
+    const pip = document.createElement('span');
+    pip.className = 'tile-pip';
+    const label = document.createElement('span');
+    label.textContent = opt.label;
+    top.appendChild(pip);
+    top.appendChild(label);
+
+    const row = document.createElement('div');
+    row.className = 'name-row';
+    const inp = document.createElement('input');
+    inp.type = opt.inputType || 'text';
+    inp.placeholder = opt.placeholder || '';
+    inp.autocomplete = 'off';
+
+    const go = document.createElement('button');
+    go.textContent = '→';
+    go.addEventListener('click', async () => {
+      const val = inp.value.trim();
+      if (!val) { inp.focus(); return; }
+      if (opt.stores) state[opt.stores] = val;
+      if (opt.submitEmail) await submitEmail(val);
+      appendUser(opt.label + ' ' + val);
+      chatOptions.innerHTML = '';
+      if (opt.next) setTimeout(() => goTo(opt.next), 320);
+    });
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') go.click(); });
+
+    row.appendChild(inp);
+    row.appendChild(go);
+    wrap.appendChild(top);
+    wrap.appendChild(row);
+    wrap.addEventListener('mouseenter', () => cursor.classList.add('expand'));
+    wrap.addEventListener('mouseleave', () => cursor.classList.remove('expand'));
+    return wrap;
+  }
+
+  // ── Overlay ──────────────────────────────────────────────────────────────────
+  const enterBtn = document.getElementById('enter-btn');
+  const overlay  = document.getElementById('form-overlay');
+  const closeBtn = document.getElementById('form-close');
+
+  const enterWrap = document.querySelector('.enter-wrap');
+
+  enterBtn.addEventListener('click', () => {
+    const btnRect = enterBtn.getBoundingClientRect();
+    const cx = btnRect.left + btnRect.width / 2;
+    const cy = btnRect.top  + btnRect.height / 2;
+
+    // Hide portal
+    enterWrap.style.transition = 'opacity 0.22s ease';
+    enterWrap.style.opacity = '0';
+    enterWrap.style.pointerEvents = 'none';
+
+    // White pill starts at portal position
+    const pill = document.createElement('div');
+    pill.style.cssText = `
+      position:fixed; z-index:50; pointer-events:none;
+      background:#fff;
+      border-radius:50%;
+      width:${btnRect.width}px; height:${btnRect.height}px;
+      left:${cx - btnRect.width/2}px; top:${cy - btnRect.height/2}px;
+    `;
+    document.body.appendChild(pill);
+
+    // Target: tile-frame wraps form-inner (520px wide, 360px tall) + 12px padding each side
+    const TW = 544, TH = 384;
+    const tx = window.innerWidth  / 2 - TW / 2;
+    const ty = window.innerHeight / 2 - TH / 2;
+
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      pill.style.transition = 'all 0.55s cubic-bezier(0.16,1,0.3,1)';
+      pill.style.width        = TW + 'px';
+      pill.style.height       = TH + 'px';
+      pill.style.left         = tx + 'px';
+      pill.style.top          = ty + 'px';
+      pill.style.borderRadius = '0';
+    }));
+
+    setTimeout(() => {
+      chatLog.innerHTML = '';
+      chatOptions.innerHTML = '';
+      Object.keys(state).forEach(k => delete state[k]);
+      // Show overlay instantly (pill is covering it)
+      overlay.style.transition = 'none';
+      overlay.classList.add('visible');
+      requestAnimationFrame(() => { overlay.style.transition = ''; });
+      pill.remove();
+      goTo('start');
+    }, 620);
   });
+
+  function restorePortal() {
+    overlay.classList.remove('visible');
+    enterWrap.style.transition = 'opacity 0.4s ease';
+    enterWrap.style.opacity = '1';
+    enterWrap.style.pointerEvents = '';
+  }
+
+  closeBtn.addEventListener('click', restorePortal);
+
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) restorePortal();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') restorePortal();
+  });
+
+  // ── Background audio ─────────────────────────────────────────────────────────
+  const bgAudio  = document.getElementById('bg-audio');
+  const muteBtn  = document.getElementById('mute-btn');
+  const iconSound  = document.getElementById('icon-sound');
+  const iconMuted  = document.getElementById('icon-muted');
+  let audioStarted = false;
+
+  function startAudio() {
+    if (audioStarted) return;
+    audioStarted = true;
+    bgAudio.volume = 0.5;
+    bgAudio.play().catch(() => {});
+    document.removeEventListener('click', startAudio);
+  }
+
+  document.addEventListener('click', startAudio);
+
+  muteBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    startAudio();
+    bgAudio.muted = !bgAudio.muted;
+    muteBtn.classList.toggle('muted', bgAudio.muted);
+    iconSound.style.display = bgAudio.muted ? 'none' : '';
+    iconMuted.style.display = bgAudio.muted ? ''     : 'none';
+  });
+
+  muteBtn.addEventListener('mouseenter', () => cursor.classList.add('expand'));
+  muteBtn.addEventListener('mouseleave', () => cursor.classList.remove('expand'));
 </script>
 </body>
 </html>
