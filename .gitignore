@@ -13,6 +13,7 @@ dist/
 # Video (too large for git — store in Supabase Storage or a CDN)
 frontend/*.mp4
 frontend/*.webm
+frontend/*.mov
 
 # OS
 .DS_Store

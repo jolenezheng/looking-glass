@@ -161,17 +161,24 @@
     pointer-events: all;
   }
 
-  .form-inner {
-    text-align: center;
+  .tile-frame {
+    display: inline-block;
+    padding: 12px;
+    background: repeating-conic-gradient(#3b82f6 0% 25%, #ffffff 0% 50%) 0 0 / 20px 20px;
     transform: translateY(16px);
     transition: transform 0.6s cubic-bezier(0.16,1,0.3,1);
-    padding: 0 24px;
-    max-width: 440px;
-    width: 100%;
   }
 
-  .form-overlay.visible .form-inner {
+  .form-overlay.visible .tile-frame {
     transform: translateY(0);
+  }
+
+  .form-inner {
+    text-align: center;
+    background: #ffffff;
+    padding: 48px 40px;
+    max-width: 440px;
+    width: 100%;
   }
 
   .form-title {
@@ -179,7 +186,7 @@
     font-weight: 300;
     font-style: italic;
     font-size: clamp(28px, 5vw, 42px);
-    color: var(--cream);
+    color: var(--ink);
     margin-bottom: 8px;
     letter-spacing: 0.02em;
   }
@@ -188,7 +195,7 @@
     font-family: 'Courier Prime', monospace;
     font-size: 10px;
     letter-spacing: 0.22em;
-    color: rgba(245,240,232,0.4);
+    color: rgba(26,24,20,0.45);
     text-transform: uppercase;
     margin-bottom: 40px;
     line-height: 1.8;
@@ -197,12 +204,12 @@
   .form-row {
     display: flex;
     gap: 0;
-    border: 0.5px solid rgba(245,240,232,0.25);
+    border: 0.5px solid rgba(26,24,20,0.2);
     transition: border-color 0.3s ease;
   }
 
   .form-row:focus-within {
-    border-color: rgba(245,240,232,0.6);
+    border-color: rgba(26,24,20,0.5);
   }
 
   .form-row input {
@@ -214,33 +221,33 @@
     font-family: 'Courier Prime', monospace;
     font-size: 12px;
     letter-spacing: 0.1em;
-    color: var(--cream);
+    color: var(--ink);
     width: 100%;
   }
 
   .form-row input::placeholder {
-    color: rgba(245,240,232,0.3);
+    color: rgba(26,24,20,0.3);
     letter-spacing: 0.15em;
   }
 
   .form-row button {
     background: none;
     border: none;
-    border-left: 0.5px solid rgba(245,240,232,0.25);
+    border-left: 0.5px solid rgba(26,24,20,0.2);
     padding: 14px 20px;
     cursor: none;
     font-family: 'Courier Prime', monospace;
     font-size: 10px;
     letter-spacing: 0.2em;
-    color: rgba(245,240,232,0.5);
+    color: rgba(26,24,20,0.5);
     text-transform: uppercase;
     white-space: nowrap;
     transition: color 0.3s ease, background 0.3s ease;
   }
 
   .form-row button:hover {
-    color: var(--cream);
-    background: rgba(245,240,232,0.06);
+    color: var(--ink);
+    background: rgba(26,24,20,0.04);
   }
 
   .form-note {
@@ -248,7 +255,7 @@
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
     font-size: 14px;
-    color: rgba(245,240,232,0.3);
+    color: rgba(26,24,20,0.4);
     line-height: 1.7;
   }
 
@@ -261,19 +268,19 @@
     font-family: 'Courier Prime', monospace;
     font-size: 10px;
     letter-spacing: 0.2em;
-    color: rgba(245,240,232,0.3);
+    color: rgba(245,240,232,0.4);
     text-transform: uppercase;
     transition: color 0.3s ease;
   }
 
-  .form-close:hover { color: rgba(245,240,232,0.7); }
+  .form-close:hover { color: rgba(245,240,232,0.8); }
 
   .thanks {
     display: none;
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
     font-size: clamp(20px, 3vw, 28px);
-    color: var(--cream);
+    color: var(--ink);
     letter-spacing: 0.04em;
     line-height: 1.6;
   }
@@ -303,6 +310,44 @@
     transform: translate(-50%, -50%) scale(3);
     opacity: 0.5;
   }
+
+  .shuffle-btn {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    z-index: 20;
+    background: none;
+    border: 0.5px solid rgba(245,240,232,0.25);
+    cursor: none;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    animation: fadeUp 1.2s ease 2.2s forwards;
+    transition: border-color 0.3s ease, background 0.3s ease;
+  }
+
+  .shuffle-btn:hover {
+    border-color: rgba(245,240,232,0.6);
+    background: rgba(245,240,232,0.06);
+  }
+
+  .shuffle-btn svg {
+    width: 16px;
+    height: 16px;
+    opacity: 0.7;
+    transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);
+  }
+
+  .shuffle-btn:hover svg {
+    opacity: 1;
+  }
+
+  .shuffle-btn.spinning svg {
+    transform: rotate(180deg);
+  }
 </style>
 </head>
 <body>
@@ -319,6 +364,15 @@
 <div class="divider-h"></div>
 <div class="divider-v"></div>
 
+<button class="shuffle-btn" id="shuffle-btn" aria-label="Shuffle video" title="Shuffle">
+  <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="16 3 21 3 21 8"/>
+    <line x1="4" y1="20" x2="21" y2="3"/>
+    <polyline points="21 16 21 21 16 21"/>
+    <line x1="15" y1="15" x2="21" y2="21"/>
+  </svg>
+</button>
+
 <div class="enter-wrap">
   <button class="enter-btn" id="enter-btn" aria-label="Enter">
     <span>enter</span>
@@ -327,6 +381,7 @@
 
 <div class="form-overlay" id="form-overlay" role="dialog" aria-label="Join the waitlist">
   <button class="form-close" id="form-close">close</button>
+  <div class="tile-frame">
   <div class="form-inner">
     <div class="form-title">Looking Glass</div>
     <div class="form-sub">a mix sharing project<br>something is coming</div>
@@ -336,6 +391,7 @@
     </div>
     <p class="form-note">no spam. just a note when it's ready.</p>
     <div class="thanks" id="thanks">you're in.<br>sit tight.</div>
+  </div>
   </div>
 </div>
 
@@ -350,29 +406,102 @@
 <script>
   const API_BASE = '';  // set to your deployed backend URL in production
 
-  for (let i = 0; i < 4; i++) {
-    const q = document.getElementById('q' + i);
+  // ── Video pool ──────────────────────────────────────────────────────────────
+  // Add new filenames here as you drop more videos into the frontend folder.
+  const ALL_VIDEOS = [
+    'video1.mov',
+    'video2.mov',
+    'video3.mov',
+    'video4.mov',
+  ];
+
+  // Shuffle array in place (Fisher-Yates)
+  function fisherYates(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+  }
+
+  const videoEls = [];          // videoEls[0..3] = the 4 <video> DOM elements
+  let displayed = [];           // displayed[0..3] = src currently in each quadrant
+  let pool = [];                // videos not currently on screen
+
+  // Seed: first 4 go to quadrants, rest to pool
+  displayed = ALL_VIDEOS.slice(0, 4);
+  pool = ALL_VIDEOS.slice(4);
+
+  function makeVideo(src, quadrantIndex) {
     const video = document.createElement('video');
-    video.src = 'video1.mp4';
+    video.src = src;
     video.autoplay = true;
     video.muted = true;
     video.loop = true;
     video.playsInline = true;
     video.setAttribute('playsinline', '');
     video.style.position = 'absolute';
-    video.style.top = '50%';
-    video.style.left = '50%';
-    video.style.width = '180%';
-    video.style.height = '180%';
-    video.style.transform = 'translate(-50%, -50%)';
+    video.style.inset = '0';
+    video.style.width = '100%';
+    video.style.height = '100%';
     video.style.objectFit = 'cover';
     video.style.opacity = '0';
     video.style.transition = 'opacity 2s ease';
     video.addEventListener('canplay', () => {
-      setTimeout(() => { video.style.opacity = '1'; }, i * 400);
+      setTimeout(() => { video.style.opacity = '1'; }, quadrantIndex * 400);
     });
+    // Loop fallback for files where the loop attribute misfires (e.g. renamed .MP4)
+    video.addEventListener('ended', () => {
+      video.currentTime = 0;
+      video.play();
+    });
+    return video;
+  }
+
+  for (let i = 0; i < 4; i++) {
+    const q = document.getElementById('q' + i);
+    const video = makeVideo(displayed[i], i);
+    videoEls.push(video);
     q.appendChild(video);
   }
+
+  // ── Shuffle button ──────────────────────────────────────────────────────────
+  const shuffleBtn = document.getElementById('shuffle-btn');
+
+  shuffleBtn.addEventListener('click', () => {
+    if (pool.length === 0) return;
+
+    const quadIdx = Math.floor(Math.random() * 4);
+    const poolIdx = Math.floor(Math.random() * pool.length);
+
+    const incoming = pool[poolIdx];
+    const outgoing = displayed[quadIdx];
+
+    // Swap in state
+    pool[poolIdx] = outgoing;
+    displayed[quadIdx] = incoming;
+
+    // Animate out → swap src → animate in
+    const videoEl = videoEls[quadIdx];
+    videoEl.style.transition = 'opacity 0.5s ease';
+    videoEl.style.opacity = '0';
+
+    setTimeout(() => {
+      videoEl.src = incoming;
+      videoEl.load();
+      videoEl.play();
+      videoEl.style.opacity = '1';
+      // Restore slow fade-in transition after swap
+      setTimeout(() => { videoEl.style.transition = 'opacity 2s ease'; }, 600);
+    }, 500);
+
+    // Spin the icon
+    shuffleBtn.classList.add('spinning');
+    setTimeout(() => shuffleBtn.classList.remove('spinning'), 450);
+  });
+
+  // Wire cursor expand to shuffle button
+  shuffleBtn.addEventListener('mouseenter', () => cursor.classList.add('expand'));
+  shuffleBtn.addEventListener('mouseleave', () => cursor.classList.remove('expand'));
 
   const cursor = document.getElementById('cursor');
   document.addEventListener('mousemove', e => {
