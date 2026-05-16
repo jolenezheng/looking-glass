@@ -855,12 +855,12 @@
       chatLog.innerHTML = '';
       chatOptions.innerHTML = '';
       Object.keys(state).forEach(k => delete state[k]);
-      // Show overlay instantly (pill is covering it)
+      // Populate content while pill still covers everything, then reveal
+      goTo('start');
       overlay.style.transition = 'none';
       overlay.classList.add('visible');
       requestAnimationFrame(() => { overlay.style.transition = ''; });
       pill.remove();
-      goTo('start');
     }, 620);
   });
 
@@ -896,6 +896,10 @@
     document.removeEventListener('click', startAudio);
   }
 
+  // Try immediately; browsers that block autoplay will silently fail and
+  // startAudio will fire again on the first click instead.
+  bgAudio.volume = 0.5;
+  bgAudio.play().then(() => { audioStarted = true; }).catch(() => {});
   document.addEventListener('click', startAudio);
 
   muteBtn.addEventListener('click', e => {
