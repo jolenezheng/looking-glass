@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Looking Glass</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Courier+Prime&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #f5f0e8;
+    --ink: #1a1814;
+    --dust: rgba(245,240,232,0.08);
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background: #0a0906;
+    cursor: none;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    inset: 0;
+  }
+
+  .quadrant {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .quadrant iframe {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 180%;
+    height: 180%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    border: none;
+    opacity: 0;
+    transition: opacity 2s ease;
+  }
+
+  .quadrant iframe.loaded {
+    opacity: 1;
+  }
+
+  .quadrant::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 9, 6, 0.38);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .divider-h {
+    position: fixed;
+    left: 0; right: 0;
+    top: 50%;
+    height: 1px;
+    background: rgba(245,240,232,0.12);
+    z-index: 10;
+    transform: scaleX(0);
+    transform-origin: center;
+    animation: lineIn 1.8s cubic-bezier(0.16,1,0.3,1) 0.6s forwards;
+  }
+
+  .divider-v {
+    position: fixed;
+    top: 0; bottom: 0;
+    left: 50%;
+    width: 1px;
+    background: rgba(245,240,232,0.12);
+    z-index: 10;
+    transform: scaleY(0);
+    transform-origin: center;
+    animation: lineInV 1.8s cubic-bezier(0.16,1,0.3,1) 0.6s forwards;
+  }
+
+  @keyframes lineIn {
+    to { transform: scaleX(1); }
+  }
+  @keyframes lineInV {
+    to { transform: scaleY(1); }
+  }
+
+  .enter-wrap {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .enter-btn {
+    background: none;
+    border: none;
+    cursor: none;
+    padding: 20px 32px;
+    position: relative;
+    opacity: 0;
+    animation: fadeUp 1.2s ease 1.8s forwards;
+  }
+
+  .enter-btn span {
+    font-family: 'Courier Prime', monospace;
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    color: var(--cream);
+    text-transform: uppercase;
+    opacity: 0.7;
+    display: block;
+    transition: opacity 0.3s ease;
+  }
+
+  .enter-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 0.5px solid rgba(245,240,232,0.25);
+    transition: border-color 0.3s ease, transform 0.3s ease;
+  }
+
+  .enter-btn:hover span { opacity: 1; }
+  .enter-btn:hover::before {
+    border-color: rgba(245,240,232,0.6);
+    transform: scale(1.04);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .form-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+    background: rgba(10,9,6,0.72);
+    backdrop-filter: blur(2px);
+  }
+
+  .form-overlay.visible {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .form-inner {
+    text-align: center;
+    transform: translateY(16px);
+    transition: transform 0.6s cubic-bezier(0.16,1,0.3,1);
+    padding: 0 24px;
+    max-width: 440px;
+    width: 100%;
+  }
+
+  .form-overlay.visible .form-inner {
+    transform: translateY(0);
+  }
+
+  .form-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(28px, 5vw, 42px);
+    color: var(--cream);
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+  }
+
+  .form-sub {
+    font-family: 'Courier Prime', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: rgba(245,240,232,0.4);
+    text-transform: uppercase;
+    margin-bottom: 40px;
+    line-height: 1.8;
+  }
+
+  .form-row {
+    display: flex;
+    gap: 0;
+    border: 0.5px solid rgba(245,240,232,0.25);
+    transition: border-color 0.3s ease;
+  }
+
+  .form-row:focus-within {
+    border-color: rgba(245,240,232,0.6);
+  }
+
+  .form-row input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 14px 18px;
+    font-family: 'Courier Prime', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--cream);
+    width: 100%;
+  }
+
+  .form-row input::placeholder {
+    color: rgba(245,240,232,0.3);
+    letter-spacing: 0.15em;
+  }
+
+  .form-row button {
+    background: none;
+    border: none;
+    border-left: 0.5px solid rgba(245,240,232,0.25);
+    padding: 14px 20px;
+    cursor: none;
+    font-family: 'Courier Prime', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: rgba(245,240,232,0.5);
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: color 0.3s ease, background 0.3s ease;
+  }
+
+  .form-row button:hover {
+    color: var(--cream);
+    background: rgba(245,240,232,0.06);
+  }
+
+  .form-note {
+    margin-top: 20px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: rgba(245,240,232,0.3);
+    line-height: 1.7;
+  }
+
+  .form-close {
+    position: absolute;
+    top: 28px; right: 28px;
+    background: none;
+    border: none;
+    cursor: none;
+    font-family: 'Courier Prime', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: rgba(245,240,232,0.3);
+    text-transform: uppercase;
+    transition: color 0.3s ease;
+  }
+
+  .form-close:hover { color: rgba(245,240,232,0.7); }
+
+  .thanks {
+    display: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(20px, 3vw, 28px);
+    color: var(--cream);
+    letter-spacing: 0.04em;
+    line-height: 1.6;
+  }
+
+  .bandcamp-player {
+    position: fixed;
+    bottom: -200px;
+    left: 0;
+    opacity: 0;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .cursor {
+    position: fixed;
+    width: 6px; height: 6px;
+    background: var(--cream);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease, opacity 0.3s ease;
+    mix-blend-mode: difference;
+  }
+
+  .cursor.expand {
+    transform: translate(-50%, -50%) scale(3);
+    opacity: 0.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<div class="grid" id="grid">
+  <div class="quadrant" id="q0"></div>
+  <div class="quadrant" id="q1"></div>
+  <div class="quadrant" id="q2"></div>
+  <div class="quadrant" id="q3"></div>
+</div>
+
+<div class="divider-h"></div>
+<div class="divider-v"></div>
+
+<div class="enter-wrap">
+  <button class="enter-btn" id="enter-btn" aria-label="Enter">
+    <span>enter</span>
+  </button>
+</div>
+
+<div class="form-overlay" id="form-overlay" role="dialog" aria-label="Join the waitlist">
+  <button class="form-close" id="form-close">close</button>
+  <div class="form-inner">
+    <div class="form-title">Looking Glass</div>
+    <div class="form-sub">a mix sharing project<br>something is coming</div>
+    <div class="form-row">
+      <input type="email" id="email-input" placeholder="your email" autocomplete="off" />
+      <button id="submit-btn" type="button">I'm in</button>
+    </div>
+    <p class="form-note">no spam. just a note when it's ready.</p>
+    <div class="thanks" id="thanks">you're in.<br>sit tight.</div>
+  </div>
+</div>
+
+<iframe
+  class="bandcamp-player"
+  src="https://bandcamp.com/EmbeddedPlayer/v=2/track=486922095/size=large/tracklist=false/artwork=small/"
+  seamless
+  id="bc-player"
+  title="Looking Glass by K Wata"
+></iframe>
+
+<script>
+  const API_BASE = '';  // set to your deployed backend URL in production
+
+  for (let i = 0; i < 4; i++) {
+    const q = document.getElementById('q' + i);
+    const video = document.createElement('video');
+    video.src = 'video1.mp4';
+    video.autoplay = true;
+    video.muted = true;
+    video.loop = true;
+    video.playsInline = true;
+    video.setAttribute('playsinline', '');
+    video.style.position = 'absolute';
+    video.style.top = '50%';
+    video.style.left = '50%';
+    video.style.width = '180%';
+    video.style.height = '180%';
+    video.style.transform = 'translate(-50%, -50%)';
+    video.style.objectFit = 'cover';
+    video.style.opacity = '0';
+    video.style.transition = 'opacity 2s ease';
+    video.addEventListener('canplay', () => {
+      setTimeout(() => { video.style.opacity = '1'; }, i * 400);
+    });
+    q.appendChild(video);
+  }
+
+  const cursor = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+  });
+
+  const interactives = document.querySelectorAll('button, input, a');
+  interactives.forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('expand'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('expand'));
+  });
+
+  const enterBtn = document.getElementById('enter-btn');
+  const overlay = document.getElementById('form-overlay');
+  const closeBtn = document.getElementById('form-close');
+  const submitBtn = document.getElementById('submit-btn');
+  const emailInput = document.getElementById('email-input');
+  const thanks = document.getElementById('thanks');
+  const formRow = document.querySelector('.form-row');
+  const formNote = document.querySelector('.form-note');
+  const formSub = document.querySelector('.form-sub');
+
+  enterBtn.addEventListener('click', () => {
+    overlay.classList.add('visible');
+    setTimeout(() => emailInput.focus(), 400);
+  });
+
+  closeBtn.addEventListener('click', () => {
+    overlay.classList.remove('visible');
+  });
+
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.remove('visible');
+  });
+
+  submitBtn.addEventListener('click', handleSubmit);
+  emailInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleSubmit();
+  });
+
+  async function handleSubmit() {
+    const email = emailInput.value.trim();
+    if (!email || !email.includes('@')) {
+      emailInput.style.borderBottom = '0.5px solid rgba(245,240,232,0.4)';
+      emailInput.focus();
+      return;
+    }
+
+    submitBtn.textContent = '...';
+    submitBtn.disabled = true;
+
+    try {
+      const res = await fetch(`${API_BASE}/waitlist`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        // already on list — still show thanks
+        if (res.status !== 409) throw new Error(data.detail || 'error');
+      }
+    } catch (err) {
+      // fail silently for UX — the user sees thanks either way
+      console.error('waitlist error:', err);
+    }
+
+    formRow.style.display = 'none';
+    formNote.style.display = 'none';
+    formSub.style.display = 'none';
+    thanks.style.display = 'block';
+    thanks.style.animation = 'fadeUp 0.8s ease forwards';
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') overlay.classList.remove('visible');
+  });
+</script>
+</body>
+</html>
